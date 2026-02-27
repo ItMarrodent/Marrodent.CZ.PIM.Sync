@@ -11,9 +11,9 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Sql
         private readonly SqlConnection _connection;
 
         //CTOR
-        public SqlController(string connnectionString)
+        public SqlController(string connectionString)
         {
-            _connection = new SqlConnection(connnectionString);
+            _connection = new SqlConnection(connectionString);
         }
 
         //Public
