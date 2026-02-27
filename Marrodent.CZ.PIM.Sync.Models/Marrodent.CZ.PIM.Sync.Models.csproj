@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Soneta.Business" Version="2512.4.4" />
+    <PackageReference Include="Soneta.Products.Content" Version="2512.4.4" />
+  </ItemGroup>
+
 </Project>
