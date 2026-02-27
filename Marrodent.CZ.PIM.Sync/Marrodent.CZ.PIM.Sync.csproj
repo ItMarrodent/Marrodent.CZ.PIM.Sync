@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Marrodent.CZ.PIM.Sync.Infrastructure\Marrodent.CZ.PIM.Sync.Infrastructure.csproj" />
+    <ProjectReference Include="..\Marrodent.CZ.PIM.Sync.Models\Marrodent.CZ.PIM.Sync.Models.csproj" />
+  </ItemGroup>
+
 </Project>

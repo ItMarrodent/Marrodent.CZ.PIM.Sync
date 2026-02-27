@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="Marrodent.CZ.PIM.Sync.Infrastructure/Marrodent.CZ.PIM.Sync.Infrastructure.csproj" />
+  <Project Path="Marrodent.CZ.PIM.Sync.Models/Marrodent.CZ.PIM.Sync.Models.csproj" />
   <Project Path="Marrodent.CZ.PIM.Sync/Marrodent.CZ.PIM.Sync.csproj" />
 </Solution>

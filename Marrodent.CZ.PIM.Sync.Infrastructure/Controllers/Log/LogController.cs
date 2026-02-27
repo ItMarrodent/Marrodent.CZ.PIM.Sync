@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Reflection;
+using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Log;
 
-namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers
+namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Log
 {
     public sealed class LogController : ILogController
     {

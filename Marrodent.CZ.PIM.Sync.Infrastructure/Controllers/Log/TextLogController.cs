@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Log;
+using Microsoft.Extensions.Logging;
 
 namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Log
 {
