@@ -1,11 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Log;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Rest;
 using Microsoft.Extensions.Logging;
 
 namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
 {
-    public sealed class SendingController <T>
+    public sealed class SendingController <T> : ISendingController<T>
     {
         //Private
         private readonly HttpClient _client;
@@ -26,11 +28,11 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
             //Prepare - request
             HttpRequestMessage request = new HttpRequestMessage(method, address)
             {
-                Content = new StringContent(JsonSerializer.Serialize(payload))
+                Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
             };
 
             //Add - auth header
-            request.Headers.Add("Authentication",(await _tokenController.GetToken()).AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", (await _tokenController.GetToken()).AccessToken);
 
             //Execute
             HttpResponseMessage response = await _client.SendAsync(request);

@@ -1,14 +1,26 @@
 ﻿using Dapper;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Data;
+using Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Log;
+using Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Sql;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Handlers;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Data;
+using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Log;
+using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Rest;
 using Marrodent.CZ.PIM.Sync.Models.Data;
 using Marrodent.CZ.PIM.Sync.Models.PIM.Configuration;
 
+//Address
+string address = @"https://pim-hs.ageno.work/api/rest/v1/categories/import/hs";
+
+//SQL
 string connectionString = @"Server=VPLCZDQAMSSQL01\ENOVA_DEV;Database=Enova_2306.1.5.0;User Id=devDBadmERP;Password=Zu6rkp5hnKCG_djtmrq_;TrustServerCertificate=True;MultipleActiveResultSets=True";
 SqlMapper.AddTypeHandler(new SemicolonSeparatedIntListHandler());
 
+//Log
+ILogController logController = new LogController("PIM");
+
+//Credentials
 PimCredentials credentials = new PimCredentials
 {
     Username = "enova_7186",
@@ -18,10 +30,17 @@ PimCredentials credentials = new PimCredentials
     AuthUrl = "https://pim-hs.ageno.work/api/oauth/v1/token"
 };
 
+//Rest
+ITokenController tokenController = new TokenController(logController, credentials);
+ISendingController<ProductCategory> sendingController = new SendingController<ProductCategory>(tokenController, logController);
 
+//Data
 IProductsCategoriesDataController controller = new ProductsCategoriesDataController(new SqlController<ProductCategory>(connectionString));
 var data = await controller.GetCategories();
 
+//Send
+await sendingController.Execute(HttpMethod.Post, new Uri(address), data);
 
+//Stop
 bool x = true;
 
