@@ -15,6 +15,7 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
         private readonly HttpClient _client;
         private readonly ILogController _logController;
         private readonly PimCredentials _credentials;
+        private TokenResponse? _token;
 
         //CTOR
         public TokenController(ILogController logController, PimCredentials credentials)
@@ -27,6 +28,9 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
         //Public
         public async Task<TokenResponse> GetToken()
         {
+            //Check - token
+            if (_token != null && _token.CreationTime.AddSeconds(_token.ExpiresIn) > DateTime.Now) return _token;
+
             //Prepare - payload
             FormUrlEncodedContent content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
@@ -51,7 +55,8 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
             }
 
             //Result
-            return JsonSerializer.Deserialize<TokenResponse>(json)!;
+            _token = JsonSerializer.Deserialize<TokenResponse>(json)!;
+            return _token;
         }
     }
 }

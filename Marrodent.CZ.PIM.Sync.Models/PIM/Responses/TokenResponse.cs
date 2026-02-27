@@ -18,5 +18,8 @@ namespace Marrodent.CZ.PIM.Sync.Models.PIM.Responses
 
         [JsonPropertyName("scope")]
         public string? Scope { get; set; }
+
+        [JsonIgnore]
+        public DateTime CreationTime { get; } = DateTime.Now; 
     }
 }
