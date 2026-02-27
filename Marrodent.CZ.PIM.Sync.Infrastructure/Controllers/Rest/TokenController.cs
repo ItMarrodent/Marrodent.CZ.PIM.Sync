@@ -1,12 +1,10 @@
 ﻿using System.Net.Http.Headers;
-using Google.Apis.Auth.OAuth2;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Extensions;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Log;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Rest;
 using Marrodent.CZ.PIM.Sync.Models.PIM.Configuration;
 using Marrodent.CZ.PIM.Sync.Models.PIM.Responses;
 using Microsoft.Extensions.Logging;
-using System.Text;
 using System.Text.Json;
 
 namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
@@ -46,7 +44,11 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
             string json = await response.Content.ReadAsStringAsync();
 
             //Check - request
-            if (!response.IsSuccessStatusCode) { _logController.Log(LogLevel.Error, json); }
+            if (!response.IsSuccessStatusCode)
+            {
+                _logController.Log(LogLevel.Error, json);
+                throw new Exception($"Problem with token generating: {json}");
+            }
 
             //Result
             return JsonSerializer.Deserialize<TokenResponse>(json)!;
