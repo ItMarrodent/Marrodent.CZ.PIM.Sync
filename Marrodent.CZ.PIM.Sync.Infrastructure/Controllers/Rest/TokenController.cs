@@ -1,10 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using Google.Apis.Auth.OAuth2;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Extensions;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Log;
 using Marrodent.CZ.PIM.Sync.Infrastructure.Interfaces.Rest;
 using Marrodent.CZ.PIM.Sync.Models.PIM.Configuration;
 using Marrodent.CZ.PIM.Sync.Models.PIM.Responses;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using System.Text.Json;
 
 namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
 {
@@ -26,23 +29,26 @@ namespace Marrodent.CZ.PIM.Sync.Infrastructure.Controllers.Rest
         //Public
         public async Task<TokenResponse> GetToken()
         {
+            //Prepare - payload
             FormUrlEncodedContent content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                ["grant_type"] = "password",
-                ["client_id"] = _credentials.ClientId.ToBase64(),
-                ["client_secret"] = _credentials.ClientSecret.ToBase64(),
-                ["username"] = _credentials.Username,
-                ["password"] = _credentials.Password,
+                { "grant_type", "password" },
+                { "username",   _credentials.Username },
+                { "password",   _credentials.Password }
             });
 
-            HttpResponseMessage response = await _client.PostAsync(new Uri(_credentials.AuthUrl), content);
+            //Prepare - request
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _credentials.AuthUrl) { Content = content };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", $"{_credentials.ClientId}:{_credentials.ClientSecret}".ToBase64());
+
+            //Execute - request
+            HttpResponseMessage response = await _client.SendAsync(request);
             string json = await response.Content.ReadAsStringAsync();
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logController.Log(LogLevel.Error, json);
-            }
+            //Check - request
+            if (!response.IsSuccessStatusCode) { _logController.Log(LogLevel.Error, json); }
 
+            //Result
             return JsonSerializer.Deserialize<TokenResponse>(json)!;
         }
     }
